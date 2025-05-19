@@ -1,38 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-	<title>Admin Dashboard</title>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='admin_db.css') }}">
 </head>
+
 <body>
-	<div class="box">
-		<div class="back">
-			<a href ="{{url_for('logout')}}" class="logout-btn">Logout</a>
-		</div>	
-		<h1> Hi {{name}} ! Welcome to the Admin Dashboard</h1>
-		<div class="section">
-			<h2>Categories</h2>
-			<div class="cat">
-				<a href ="{{url_for('create_category',curr_login_id=data.curr_login_id)}}" 
-				class="btn">Create Category</a>
-			</div>
-			{% for category in data.categories %}
-			<div class="category">
-				<h3 class="cat-names">{{category.name}}</h3>
-				<div clas="cat-actions">
-					<div class="edit">
-						<a href ="{{url_for('edit_category',curr_login_id=data.curr_login_id,category_id=category.id)}}" 
-						class="btn">Edit</a>
-						<a href ="{{url_for('remove_category',curr_login_id=data.curr_login_id,category_id=category.id)}}" 
-						class="btn">Remove</a>
-					</div>
-				</div>
-			</div>
-			{%endfor %}
-		</div>
-	</div>			
-
-
-
-
+    <div class="box">
+        <div class="logout">
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </div>
+        <h1>Hi {{name}}! Welcome to the Admin Dashboard</h1>
+        <div class="section">
+            <h2>Categories</h2>
+            <a href="{{ url_for('create_category', curr_login_id=data.curr_login_id) }}"
+                class="create-category-btn">Create Category</a>
+            {% for category in data.categories %}
+            <div class="category">
+                <h3 class="category-name">{{ category.name }}</h3>
+                <div class="category-actions">
+                    <a href="{{ url_for('edit_category', curr_login_id=data.curr_login_id, category_id=category.id) }}"
+                        class="edit-category-btn">Edit</a>
+                    <a  href="{{ url_for('remove_category', curr_login_id=data.curr_login_id, category_id=category.id) }}"
+                        class="remove-category-btn">Remove</a>
+                    <a  href="{{ url_for('create_product', curr_login_id=data.curr_login_id, category_id=category.id) }}"
+                        class="addpro-btn">Add Product</a>   
+                </div>
+                <table class="prod_table">
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Mf Date</th>
+                        <th>Expiry Date</th>
+                        <th>Actions</th>
+                    </tr> 
+                    {%for product in category.products %}
+                    <tr>
+                        <td class="prod_name">{{product.name}}</td>
+                        <td class="prod_name">{{product.price}}</td>
+                        <td class="prod_name">{{product.unit}}</td>
+                        <td class="prod_name">{{product.quantity}}</td>
+                        <td class="prod_name">{{product.mf_date}}</td>
+                        <td class="prod_name">{{product.expiry_date}}</td>
+                        <td>
+                            <a href="{{ url_for('edit_product', curr_login_id=data.curr_login_id, product_id=product.id) }}"
+                            class="edit-prod-btn">Edit</a>
+                            <a  href="{{ url_for('remove_product', curr_login_id=data.curr_login_id, product_id=product.id) }}"
+                            class="remove-prod-btn">Remove</a>
+                        </td>
+                    </tr>
+                    {%endfor%}    
+                </table>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </body>
+
 </html>
