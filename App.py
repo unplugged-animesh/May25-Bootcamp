@@ -105,8 +105,50 @@ def admin_dashboard(curr_login_id):
         
         flash("Please login to access the admin dashboard")
         return redirect(url_for('logout'))
+    
+
+@app.route('/admin/<int:curr_login_id>/stats' , methods=["GET"])
+def admin_stats(curr_login_id):
+    if request.method=="GET":
+        if 'user_id' in session and session['user_id']==curr_login_id:
+            user=User.query.get(curr_login_id)
+            if not user.admin:
+                flash("You are not authorized to the see this page")
+                return redirect(f'/dashboard/{curr_login_id}')
+            
+            categories=Category.query.all()
+            category_stats=[]
+            for category in categories:
+                product_count=len(category.products)
+                total_quantity=sum([product.quantity for product in category.products])
+                category_stats.append({
+                    'name':category.name,
+                    'product_count':product_count,
+                    'total_quantity': total_quantity
+                })
+                
+                data={
+                    'curr_login_id':curr_login_id,
+                    'category_stats':category_stats
+                }
+            
+            return render_template('admin_stats.html',data=data,name=user.username)
 
     
+    
+@app.route('/customer/<int:curr_login_id>/dashboard', methods=['GET'])
+def customer_dashboard(curr_login_id):
+    if request.method == 'GET':
+        if 'user_id' in session and session['user_id'] == curr_login_id:
+            categories = Category.query.all()
+            user_cart = Cart.query.filter_by(user_id=curr_login_id).first()
+            data = {'curr_login_id': curr_login_id,
+                    'cart': {f'{category.name}': [((lambda x: 0 if x is None else x.quantity)(CartItem.query.filter_by(
+                        cart_id=user_cart.id, cartitem_product_id=product.id).first()), product) for product in category.products] for category in categories}}
+            return render_template('customer_dashboard.html', data=data, name=User.query.get(curr_login_id).username)
+        flash('Please login to access the admin dashboard.')
+        return redirect(url_for('logout'))    
+       
 @app.route('/admin/<int:curr_login_id>/create_category',methods=["GET","POST"])
 def create_category(curr_login_id):
     if not get_user_admin(curr_login_id):
@@ -228,7 +270,7 @@ def edit_product(curr_login_id,product_id):
     categories=Category.query.all()
     return render_template('edit_product.html',curr_login_id=curr_login_id,categories=categories,product=product) 
         
-    
+
             
 
 @app.route('/admin/<int:curr_login_id>/remove_product/<int:product_id>', methods=['GET', 'POST'])
@@ -247,7 +289,10 @@ def remove_product(curr_login_id, product_id):
     return render_template('remove_product.html', curr_login_id=curr_login_id, product=product)
 
  
-  
+
+
+
+
     
 @app.route('/logout')   
 def logout():

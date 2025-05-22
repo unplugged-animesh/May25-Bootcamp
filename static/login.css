@@ -1,0 +1,37 @@
+body{
+	font-family: Arial, Helvetica, sans-serif;
+	background-color: #baebdb;
+}
+
+h1{
+	text-align: center;
+	color: #30afea;
+}
+
+.my-box{
+	max-width: 400px;
+	margin: auto;
+	background-color: bisque;
+	padding: 50px;
+	border-radius: 25px;
+}
+
+label{
+	display: block;
+	margin-bottom: 10px;
+	color: rgb(168, 61, 225);
+	font-weight: bold;
+
+}
+
+input[type="text"],
+input[type="password"]{
+	width:80%;
+	padding: 10px;
+	margin-bottom: 20px;
+	border-radius: 3px;
+}
+
+input[type="submit"]:hover{
+	background-color: rgb(227, 221, 62);
+}
